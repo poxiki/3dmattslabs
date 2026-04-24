@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>3DMattsLab | Tienda Oficial</title>
+    <style>
+        :root {
+            --primary: #00d4ff; --bg: #0f172a; --card-bg: #1e293b; --text: #f8fafc;
+        }
+        body { font-family: 'Segoe UI', sans-serif; background-color: var(--bg); color: var(--text); margin: 0; padding: 20px; }
+        header { text-align: center; padding: 40px 0; background: linear-gradient(135deg, #1e293b 0%, #0f172a 100%); border-radius: 15px; margin-bottom: 30px; border: 1px solid #334155; }
+        h1 { margin: 0; color: var(--primary); text-transform: uppercase; letter-spacing: 2px; }
+        .grid-productos { display: grid; grid-template-columns: repeat(auto-fill, minmax(280px, 1fr)); gap: 25px; max-width: 1200px; margin: 0 auto; }
+        .card { background: var(--card-bg); border-radius: 12px; overflow: hidden; border: 1px solid #334155; transition: 0.3s; }
+        .card:hover { transform: translateY(-5px); border-color: var(--primary); }
+        .foto-prod { width: 100%; height: 250px; object-fit: cover; background: #334155; }
+        .info { padding: 20px; }
+        .precio { font-size: 1.5rem; color: var(--primary); font-weight: bold; display: block; margin: 10px 0; }
+        .btn-comprar { display: block; text-align: center; background: var(--primary); color: #000; padding: 12px; text-decoration: none; border-radius: 8px; font-weight: bold; }
+    </style>
+</head>
+<body>
+
+    <header>
+        <h1>3DMattsLab</h1>
+        <p>Catálogo Automático desde mi Excel</p>
+    </header>
+
+    <div class="grid-productos" id="contenedor">
+        </div>
+
+    <script>
+        // PEGA TU LINK DE GOOGLE SHEETS (CSV) AQUÍ ABAJO
+        const urlExcel = 'https://docs.google.com/spreadsheets/d/17RB7BeGrztweEuURSdu7NtUBm4fk-XBRV0aYInOBCf0/edit?usp=sharing';
+
+        async function cargarProductos() {
+            const res = await fetch(urlExcel);
+            const data = await res.text();
+            const filas = data.split('\n').slice(1); // Ignora la primera fila (títulos)
+            const contenedor = document.getElementById('contenedor');
+            contenedor.innerHTML = '';
+
+            filas.forEach(fila => {
+                const columnas = fila.split(',');
+                if(columnas.length >= 3) {
+                    const [nombre, precio, imagen, link] = columnas;
+                    contenedor.innerHTML += `
+                        <div class="card">
+                            <img src="${imagen.trim()}" class="foto-prod" alt="${nombre}">
+                            <div class="info">
+                                <h3>${nombre}</h3>
+                                <span class="precio">$${precio}</span>
+                                <a href="${link}" class="btn-comprar">Pedir por WhatsApp</a>
+                            </div>
+                        </div>
+                    `;
+                }
+            });
+        }
+
+        cargarProductos();
+    </script>
+</body>
+</html>
